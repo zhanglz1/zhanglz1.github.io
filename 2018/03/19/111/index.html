@@ -9,7 +9,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
-    <title>不知道写什么好…… · zhanglz1&#39;s blog</title>
+    <title>Android存储访问及目录 · zhanglz1&#39;s blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -269,7 +269,7 @@
                 <a href="/" >zhanglz1&#39;s blog</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">不知道写什么好……</a>
+                <a href="#" class="post-name">Android存储访问及目录</a>
             </div>
     </div>
     
@@ -301,7 +301,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            不知道写什么好……
+            Android存储访问及目录
             <!-- 404 -->
             
         </h1>
@@ -348,7 +348,75 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        
+        <p>date: 2018-03-19 16:08:57<br>tags:android 访问 目录</p>
+<p>Android的外部存储一般指SD卡，内存也可以指定一部分模拟为外存。<br>4.4以后，读写sd卡需要WRITE_EXTERNAL_STORAGE和READ_EXTERNAL_STORAGE权限。但是应用包名内的目录（/storage/emulated/0/Android/data/com.example.test/）不需要此权限。<br>敏感数据（如配置及log等）最好不要存在外部存储上。</p>
+<p>  getDataDirectory()：数据目录。</p>
+<p>  getRootDirectory()：系统目录</p>
+<p>  getDownloadCacheDirectory()：下载缓存内容目录。</p>
+<p>  getExternalStorageDirectory()：主要的外部存储目录。</p>
+<p>  getExternalStorageState()：外部存储是否可以被访问。</p>
+<p>  getExternalStoragePublicDirectory(String)：sd卡的一级子目录，如Pictures,Videos。可以放一些共享文件。需要读写权限。使用前需确认String的值存在该路径，没有要file.makedirs。</p>
+<p>  isExternalStorageEmulated()设备的外存是否是用内存模拟的，是则返回true。</p>
+<p>  isExternalStorageRemovable()设备的外存是否是可以拆卸的，比如SD卡，是则返回true。</p>
+<p>  Context.getExternalFilesDir(String)：应用在sd卡上的私有目录的子目录/files/String，应用卸载时即被清理。</p>
+<p>Context.getExternalCacheDir()：应用在sd卡上的私有目录的子目录/cache，应用卸载时即被清理。</p>
+<p>Context.getFilesDir() ：内存中应用的私有目录的子目录files,应用卸载时即被清理。</p>
+<p>Context.getCacheDir() ：内存中应用的私有目录的子目录cache,应用卸载时即被清理。</p>
+<p>　</p>
+<p>在zui上的测试代码：</p>
+<pre><code>public static void getEnvironmentDirectories() {
+    Log.i(LOG_TAG, &quot;getExternalStorageState(): &quot; + Environment.getExternalStorageState().toString());
+    Log.i(LOG_TAG, &quot;getDownloadCacheDirectory(): &quot; + Environment.getDownloadCacheDirectory().getPath().toString());
+    Log.i(LOG_TAG, &quot;getDataDirectory(): &quot; + Environment.getDataDirectory().getPath().toString());
+    Log.i(LOG_TAG, &quot;getExternalStorageDirectory(): &quot; + Environment.getExternalStorageDirectory().getPath().toString());
+    Log.i(LOG_TAG, &quot;getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES): &quot;
+            + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath().toString());
+    Log.i(LOG_TAG, &quot;getRootDirectory(): &quot; + Environment.getRootDirectory().getPath().toString());
+
+    Log.i(LOG_TAG, &quot;getExternalStorageState().getAbsolutePath(): &quot; + Environment.getExternalStorageState().toString());
+    Log.i(LOG_TAG, &quot;getDownloadCacheDirectory().getAbsolutePath(): &quot; + Environment.getDownloadCacheDirectory().getAbsolutePath().toString());
+    Log.i(LOG_TAG, &quot;getDataDirectory().getAbsolutePath(): &quot; + Environment.getDataDirectory().getAbsolutePath().toString());
+    Log.i(LOG_TAG, &quot;getExternalStorageDirectory().getAbsolutePath(): &quot; + Environment.getExternalStorageDirectory().getAbsolutePath().toString());
+    Log.i(LOG_TAG, &quot;getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath(): &quot;
+            + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath().toString());
+    Log.i(LOG_TAG, &quot;getRootDirectory().getAbsolutePath(): &quot; + Environment.getRootDirectory().getAbsolutePath().toString());
+
+    Log.i(LOG_TAG, &quot;isExternalStorageEmulated(): &quot; + Environment.isExternalStorageEmulated());
+    Log.i(LOG_TAG, &quot;isExternalStorageRemovable(): &quot; + Environment.isExternalStorageRemovable());
+
+}
+
+public static void getApplicationDirectories(Context context) {
+
+    Log.i(LOG_TAG, &quot;context.getFilesDir(): &quot; + context.getFilesDir().toString());
+    Log.i(LOG_TAG, &quot;context.getCacheDir(): &quot; + context.getCacheDir().toString());
+
+    // methods below will return null if the permissions denied
+    Log.i(LOG_TAG, &quot;context.getExternalFilesDir(Environment.DIRECTORY_MOVIES): &quot;
+            + context.getExternalFilesDir(Environment.DIRECTORY_MOVIES));
+
+    Log.i(LOG_TAG, &quot;context.getExternalCacheDir(): &quot; + context.getExternalCacheDir());
+}
+</code></pre><p>输出结果：</p>
+<p>03-21 10:33:26.433 14799 14799 I test    : getExternalStorageState(): mounted</p>
+<p>03-21 10:33:26.434 14799 14799 I test    : getDownloadCacheDirectory(): /cache</p>
+<p>03-21 10:33:26.434 14799 14799 I test    : getDataDirectory(): /data</p>
+<p>03-21 10:33:26.438 14799 14799 I test    : getExternalStorageDirectory(): /<br>storage/emulated/0</p>
+<p>03-21 10:33:26.444 14799 14799 I test    : getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES): /storage/emulated/0/Pictures</p>
+<p>03-21 10:33:26.444 14799 14799 I test    : getRootDirectory(): /system</p>
+<p>03-21 10:33:26.467 14799 14799 I test    : getExternalStorageState().getAbsolutePath(): mounted</p>
+<p>03-21 10:33:26.467 14799 14799 I test    : getDownloadCacheDirectory().getAbsolutePath(): /cache</p>
+<p>03-21 10:33:26.467 14799 14799 I test    : getDataDirectory().getAbsolutePath(): /data</p>
+<p>03-21 10:33:26.468 14799 14799 I test    : getExternalStorageDirectory().getAbsolutePath(): /storage/emulated/0</p>
+<p>03-21 10:33:26.472 14799 14799 I test    : getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath(): /storage/emulated/0/Pictures</p>
+<p>03-21 10:33:26.472 14799 14799 I test    : getRootDirectory().getAbsolutePath(): /system</p>
+<p>03-21 10:33:26.479 14799 14799 I test    : isExternalStorageEmulated(): true</p>
+<p>03-21 10:33:26.491 14799 14799 I test    : isExternalStorageRemovable(): false</p>
+<p>03-21 10:33:26.492 14799 14799 I test    : context.getFilesDir(): /data/user/0/com.example.test/files</p>
+<p>03-21 10:33:26.492 14799 14799 I test    : context.getCacheDir(): /data/user/0/com.example.test/cache</p>
+<p>03-21 10:33:26.499 14799 14799 I test    : context.getExternalFilesDir(Environment.DIRECTORY_MOVIES): /storage/emulated/0/Android/data/com.example.test/files/Movies</p>
+<p>03-21 10:33:26.501 14799 14799 I test    : context.getExternalCacheDir(): /storage/emulated/0/Android/data/com.example.test/cache</p>
+
     </article>
     <!-- 前后页  -->
     <ul class="post-paginator">
@@ -498,12 +566,12 @@ top:50vh;
     
     
     
-    <div class="archive-year"> 2018 </div>
+    <div class="archive-year"> Invalid date </div>
     <ul class="year-list">
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">03/19</span><a class="archive-post-title" href= "/2018/03/19/111/" >不知道写什么好……</a>
+            <span class="archive-post-date">Invalid date</span><a class="archive-post-title" href= "/2018/03/19/111/" >Android存储访问及目录</a>
         </li>
     
     </div>
