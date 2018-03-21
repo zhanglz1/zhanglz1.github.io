@@ -321,11 +321,11 @@ height:50vh;
                     <span>Android存储访问及目录</span>
             </a>
             <div class="abstract-content">
-                date: 2018-03-19 16:08:57tags:android 访问 目录
-Android的外部存储一般指SD卡，内存也可以指定一部分模拟为外存。4.4以后，读写sd卡需要WRITE_EXTERNAL_STORAGE和READ_EXTERNAL_STORAGE权限。但是应用包名内的目录（/storage/emulated/0/Android/data/com.example.test/）不需要此权限。敏感数据（如配置及log等）最好不要存在外部存储上。
+                Android的外部存储一般指SD卡，内存也可以指定一部分模拟为外存。4.4以后，读写sd卡需要WRITE_EXTERNAL_STORAGE和READ_EXTERNAL_STORAGE权限。但是应用包名内的目录（/storage/emulated/0/Android/data/com.example.test/）不需要此权限。敏感数据（如配置及log等）最好不要存在外部存储上。
   getDataDirectory()：数据目录。
   getRootDirectory()：系统目录
-  getDown...
+  getDownloadCacheDirectory()：下载缓存内容目录。
+  getExternal...
             </div>
             <div class="abstract-post-meta">
                 <!-- date  -->
